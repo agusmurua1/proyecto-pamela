@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proyecto Pamela — Bijouterie artesanal</title>
+<meta name="description" content="Collares, aretes, pulseras y rosarios artesanales hechos a mano con cristales y piedras naturales. Envíos a todo el país.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ============ TOPBAR ============ -->
+<div class="topbar">
+  Envíos a todo el país · Piezas hechas a mano, una por una
+</div>
+
+<!-- ============ HEADER ============ -->
+<header class="header" id="header">
+  <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+
+  <a href="#inicio" class="logo">
+    <img src="img/marca/logo.jpg" alt="Proyecto Pamela">
+    <span class="logo-text">proyecto <em>pamela</em></span>
+  </a>
+
+  <nav class="nav-main" id="navMain">
+    <a href="#inicio">Inicio</a>
+    <div class="nav-dropdown">
+      <button class="nav-dropdown-trigger">Colecciones <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.4" fill="none"/></svg></button>
+      <div class="nav-dropdown-menu">
+        <a href="#tienda" data-filter="collares">Collares</a>
+        <a href="#tienda" data-filter="aretes">Aretes</a>
+        <a href="#tienda" data-filter="pulseras">Pulseras</a>
+        <a href="#tienda" data-filter="rosarios">Rosarios</a>
+      </div>
+    </div>
+    <a href="#lookbook">Lookbook</a>
+    <a href="#nosotros">Nosotros</a>
+    <a href="#contacto">Contacto</a>
+  </nav>
+
+  <div class="header-actions">
+    <a href="https://www.instagram.com/proyecto.pamela" target="_blank" rel="noopener noreferrer" class="icon-btn hide-mobile" aria-label="Instagram">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>
+    </a>
+    <button class="icon-btn cart-btn" id="cartToggle" aria-label="Ver carrito">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 4h2l2.4 12.4a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9.5" cy="20.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="17.5" cy="20.5" r="1.1" fill="currentColor" stroke="none"/></svg>
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- ============ MOBILE NAV ============ -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#inicio">Inicio</a>
+  <a href="#tienda">Colecciones</a>
+  <a href="#tienda" data-filter="collares" class="mobile-sub">— Collares</a>
+  <a href="#tienda" data-filter="aretes" class="mobile-sub">— Aretes</a>
+  <a href="#tienda" data-filter="pulseras" class="mobile-sub">— Pulseras</a>
+  <a href="#tienda" data-filter="rosarios" class="mobile-sub">— Rosarios</a>
+  <a href="#lookbook">Lookbook</a>
+  <a href="#nosotros">Nosotros</a>
+  <a href="#contacto">Contacto</a>
+  <a href="https://www.instagram.com/proyecto.pamela" target="_blank" rel="noopener noreferrer" class="mobile-ig">Seguinos en Instagram</a>
+</div>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="inicio">
+  <div class="hero-text">
+    <p class="eyebrow">Bijouterie artesanal · hecha a mano</p>
+    <h1>Piezas que<br><em>cuentan</em><br>tu historia.</h1>
+    <p class="hero-desc">Cada collar, cada arete, cada pulsera — hecho con amor, cristales y mucho detalle.</p>
+    <div class="hero-actions">
+      <a href="#tienda" class="btn btn-primary">Ver tienda</a>
+      <a href="https://www.instagram.com/proyecto.pamela" target="_blank" rel="noopener noreferrer" class="btn-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/></svg>
+        @proyecto.pamela
+      </a>
+    </div>
+  </div>
+  <div class="hero-img">
+    <img src="img/marca/hero.jpg" alt="Mujer usando collar artesanal de Proyecto Pamela">
+    <div class="hero-tag">
+      <p>Nueva colección</p>
+      <span>Cristales &amp; Perlas</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CATEGORIAS ============ -->
+<section class="categorias">
+  <button class="cat-card" data-filter="collares">
+    <img src="img/productos/collar-medallon-ambar.jpg" alt="Collares">
+    <span>Collares</span>
+  </button>
+  <button class="cat-card" data-filter="aretes">
+    <img src="img/productos/aretes-filigrana-granate.jpg" alt="Aretes">
+    <span>Aretes</span>
+  </button>
+  <button class="cat-card" data-filter="pulseras">
+    <img src="img/productos/set-pulseras-apilables.jpg" alt="Pulseras">
+    <span>Pulseras</span>
+  </button>
+  <button class="cat-card" data-filter="rosarios">
+    <img src="img/productos/rosario-cruz-granate.jpg" alt="Rosarios">
+    <span>Rosarios</span>
+  </button>
+</section>
+
+<!-- ============ TIENDA / GRILLA DE PRODUCTOS ============ -->
+<section class="tienda" id="tienda">
+  <div class="section-head">
+    <h2>Tienda</h2>
+    <p class="section-sub">Precios en pesos argentinos · consultar disponibilidad</p>
+  </div>
+
+  <div class="filtros" id="filtros">
+    <button class="filtro-btn active" data-filter="todos">Todos</button>
+    <button class="filtro-btn" data-filter="collares">Collares</button>
+    <button class="filtro-btn" data-filter="aretes">Aretes</button>
+    <button class="filtro-btn" data-filter="pulseras">Pulseras</button>
+    <button class="filtro-btn" data-filter="rosarios">Rosarios</button>
+  </div>
+
+  <div class="productos-grid" id="productosGrid">
+    <!-- generado por js/main.js -->
+  </div>
+</section>
+
+<!-- ============ BANNER ENCARGO ============ -->
+<section class="banner-encargo">
+  <div class="banner-encargo-inner">
+    <p class="eyebrow eyebrow-light">Encargo personalizado</p>
+    <h2>Tu pieza, única.</h2>
+    <a href="https://www.instagram.com/proyecto.pamela" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light">Escribir a Pamela</a>
+  </div>
+</section>
+
+<!-- ============ LOOKBOOK ============ -->
+<section class="lookbook" id="lookbook">
+  <div class="section-head">
+    <h2>Lookbook</h2>
+    <p class="section-sub">Colección Tierra</p>
+  </div>
+  <div class="lookbook-grid">
+    <div class="lookbook-item">
+      <img src="img/marca/lookbook-1.jpg" alt="Modelo con collar largo de piedras naturales">
+      <div class="lookbook-caption">Collar Tierra</div>
+    </div>
+    <div class="lookbook-item">
+      <img src="img/marca/lookbook-2.jpg" alt="Detalle collar de piedras naturales">
+      <div class="lookbook-caption">Collar Gaia</div>
+    </div>
+    <div class="lookbook-item">
+      <img src="img/marca/lookbook-3.jpg" alt="Set collar y pulsera de piedras">
+      <div class="lookbook-caption">Set Tierra</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NOSOTROS ============ -->
+<section class="nosotros" id="nosotros">
+  <div class="nosotros-img">
+    <img src="img/marca/Feria.jpeg" alt="Pamela y Julieta en feria artesanal mostrando su bijouterie">
+  </div>
+  <div class="nosotros-text">
+    <p class="eyebrow">Nuestra historia</p>
+    <h2>Somos Pamela<br>y Julieta,<br><em>y hacemos bijouterie</em><br>con alma.</h2>
+    <p>Somos madre e hija — Pamela y Julieta — y juntas armamos Proyecto Pamela. Creemos que los pequeños objetos que llevamos con nosotras pueden cargarse de significado real.</p>
+    <p>Cada pieza se trabaja a mano, entre las dos, con cristales, piedras naturales y semillas cuidadosamente elegidas. Feria a feria, pieza a pieza.</p>
+    <div class="nosotros-actions">
+      <a href="https://www.instagram.com/proyecto.pamela" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Ver en Instagram</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ QUOTE ============ -->
+<section class="quote">
+  <p class="eyebrow">Por qué artesanal</p>
+  <blockquote>"Las piezas hechas a mano llevan la huella de quien las creó — y eso no tiene precio."</blockquote>
+  <p class="quote-author">— Pamela y Julieta</p>
+</section>
+
+<!-- ============ NEWSLETTER ============ -->
+<section class="newsletter">
+  <h2>Sumate a la lista</h2>
+  <p>Enterate primero de piezas nuevas y encargos abiertos.</p>
+  <form id="newsletterForm" class="newsletter-form">
+    <input type="email" id="newsletterEmail" placeholder="tu@email.com" required>
+    <button type="submit" class="btn btn-primary">Suscribirme</button>
+  </form>
+  <p class="newsletter-msg" id="newsletterMsg"></p>
+</section>
+
+<!-- ============ CONTACTO ============ -->
+<section class="contacto" id="contacto">
+  <div class="contacto-text">
+    <p class="eyebrow">Contacto</p>
+    <h2>¿Querés una pieza<br><em>personalizada?</em></h2>
+    <p>Escribime por Instagram o WhatsApp. Puedo crear la pieza que imaginás, desde cero.</p>
+  </div>
+  <div class="contacto-links">
+    <a href="https://www.instagram.com/proyecto.pamela" target="_blank" rel="noopener noreferrer" class="contacto-link">
+      <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/></svg> @proyecto.pamela</span>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg>
+    </a>
+    <a href="https://wa.me/5491153030690" target="_blank" rel="noopener noreferrer" class="contacto-link">
+      <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> WhatsApp</span>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg>
+    </a>
+    <a href="mailto:hola@proyectopamela.com" class="contacto-link">
+      <span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 6 10-6"/></svg> hola@proyectopamela.com</span>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <img src="img/marca/logo.jpg" alt="Proyecto Pamela">
+      <span>proyecto <em>pamela</em></span>
+    </div>
+
+    <div class="footer-col">
+      <h4>Tienda</h4>
+      <a href="#tienda" data-filter="collares">Collares</a>
+      <a href="#tienda" data-filter="aretes">Aretes</a>
+      <a href="#tienda" data-filter="pulseras">Pulseras</a>
+      <a href="#tienda" data-filter="rosarios">Rosarios</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Ayuda</h4>
+      <a href="#contacto">Contacto</a>
+      <a href="#nosotros">Sobre nosotros</a>
+      <a href="https://wa.me/5491153030690" target="_blank" rel="noopener noreferrer">Envíos y consultas</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Seguinos</h4>
+      <a href="https://www.instagram.com/proyecto.pamela" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <a href="mailto:hola@proyectopamela.com">Email</a>
+    </div>
+  </div>
+
+  <div class="footer-pagos">
+    <span>Efectivo</span>
+    <span>Transferencia bancaria</span>
+    <span>Mercado Pago</span>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© <span id="year"></span> Proyecto Pamela — Bijouterie artesanal hecha con amor</p>
+  </div>
+</footer>
+
+<!-- ============ CARRITO (drawer) ============ -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <h3>Tu carrito</h3>
+    <button class="icon-btn" id="cartClose" aria-label="Cerrar carrito">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4l16 16M20 4L4 20"/></svg>
+    </button>
+  </div>
+
+  <div class="cart-items" id="cartItems">
+    <p class="cart-empty" id="cartEmpty">Todavía no agregaste ninguna pieza.</p>
+  </div>
+
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span>Total</span>
+      <strong id="cartTotal">$0</strong>
+    </div>
+    <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-block" id="checkoutBtn">
+      Finalizar por WhatsApp
+    </a>
+    <p class="cart-note">Coordinamos el pago y el envío por WhatsApp o Instagram.</p>
+  </div>
+</aside>
+
+<!-- ============ TOAST ============ -->
+<div class="toast" id="toast"></div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
