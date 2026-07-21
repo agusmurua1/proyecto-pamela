@@ -9,15 +9,34 @@ const WHATSAPP_NUMBER = "5491153030690";
 // ---- CATÁLOGO DE PRODUCTOS ----
 // Para agregar un producto nuevo: copiá un objeto, cambiá los datos y sumá la foto en img/productos/
 const PRODUCTS = [
-  { id: "ar-01", nombre: "Aretes Flor Granate",          categoria: "aretes",   precio: 11000, img: "img/productos/aretes-flor-granate.jpg" },
-  { id: "ar-02", nombre: "Aretes Filigrana Plateada",    categoria: "aretes",   precio: 12500, img: "img/productos/aretes-filigrana-plateada.jpg" },
+  { id: "ar-01", nombre: "Aros Escarcha",            categoria: "aretes",   precio: 8000,  img: "img/productos/aros-escarcha.jpg",
+    descripcion: "Colgante, con detalle en cristal de roca facetado. Opcional ganchito de acero inoxidable." },
+  { id: "ar-02", nombre: "Aros Pensamiento Cortos",  categoria: "aretes",   precio: 10000, img: "img/productos/aros-pensamiento-cortos.jpg", video: "video/aros-pensamiento-cortos.mp4",
+    descripcion: "Colgantes, con detalle en cristal de roca facetado, otorgando un movimiento y brillo únicos. Consultar colores disponibles. Opcional ganchito de acero inoxidable." },
+  { id: "ar-03", nombre: "Aros Pensamiento Largos",  categoria: "aretes",   precio: 10000, img: "img/productos/aros-pensamiento-largo.jpg", video: "video/aros-pensamiento-largo.mp4",
+    descripcion: "Colgantes largos, con detalle en cristal de roca facetado, otorgando un movimiento y brillo únicos. Consultar colores disponibles. Opcional ganchito de acero inoxidable." },
+  { id: "ar-04", nombre: "Aros Madera",              categoria: "aretes",   precio: 10000, img: "img/productos/aros-madera.jpg",
+    descripcion: "Argollas colgantes con detalles de piedras naturales. Opcional ganchito de acero quirúrgico." },
 
-  { id: "pu-01", nombre: "Pulsera Bosque",               categoria: "pulseras", precio: 9000,  img: "img/productos/pulsera-bosque.jpg" },
+  { id: "pu-01", nombre: "Pulsera Margarita",        categoria: "pulseras", precio: 5000,  img: "img/productos/pulsera-margarita.jpg",
+    descripcion: "Consultar por colores disponibles. Elastizadas." },
 
-  { id: "co-01", nombre: "Collar Racimo Dorado",         categoria: "collares", precio: 16000, img: "img/productos/collar-racimo-dorado.jpg" },
-  { id: "co-02", nombre: "Collar Lariat Verde",          categoria: "collares", precio: 17500, img: "img/productos/collar-lariat-verde.jpg" },
-  { id: "co-03", nombre: "Collar Perlas Otoño",          categoria: "collares", precio: 15000, img: "img/productos/collar-perlas-otono.jpg" },
-  { id: "co-04", nombre: "Collar Cadena Granate",        categoria: "collares", precio: 14000, img: "img/productos/collar-cadena-granate.jpg" },
+  { id: "co-01", nombre: "Collar Abeto",             categoria: "collares", precio: 25000, img: "img/productos/collar-abeto.jpg",
+    descripcion: "Realizado con piedras naturales. Semi-rígido, regulable." },
+  { id: "co-02", nombre: "Collar Dalia",             categoria: "collares", precio: 20000, img: "img/productos/collar-dalia.jpg",
+    descripcion: "Realizado con cuentas engarzadas y detalles en cristal de roca facetado. Regulable." },
+  { id: "co-03", nombre: "Collar Jazmín",            categoria: "collares", precio: 25000, img: "img/productos/collar-jazmin.jpg",
+    descripcion: "Semi-rígido, regulable. Realizado con piedras naturales." },
+  { id: "co-04", nombre: "Collar Mosaico",           categoria: "collares", precio: 20000, img: "img/productos/collar-mosaico.jpg",
+    descripcion: "Realizado con materiales combinados y técnicas mixtas. Largo 80cm." },
+  { id: "co-05", nombre: "Collar Rústico",           categoria: "collares", precio: 15000, img: "img/productos/collar-rustico.jpg",
+    descripcion: "Realizado con materiales combinados y técnicas mixtas. Largo 50cm. Regulable." },
+  { id: "co-06", nombre: "Corbatero Dije Irregular", categoria: "collares", precio: 15000, img: "img/productos/corbatero-irregular.jpg",
+    descripcion: "Corbatero de cordón gamuzado con dije de acero. Largo aprox. 90cm, se le pueden dar varias vueltas." },
+  { id: "co-07", nombre: "Gargantilla Alerce",       categoria: "collares", precio: 15000, img: "img/productos/gargantilla-alerce.jpg",
+    descripcion: "Realizada en cordón de acero con cuentas de cristal de roca facetado. Rígido. Regulable." },
+  { id: "co-08", nombre: "Gargantilla Margarita",    categoria: "collares", precio: 15000, img: "img/productos/gargantilla-margarita.jpg",
+    descripcion: "Consultar por colores disponibles. Elastizado, cierre regulable." },
 ];
 
 const CATEGORY_LABELS = {
@@ -49,11 +68,14 @@ function renderProducts(filter = "todos") {
   grid.innerHTML = list.map(p => `
     <article class="producto-card">
       <div class="producto-img">
-        <img src="${p.img}" alt="${p.nombre}" loading="lazy">
+        ${p.video
+          ? `<video src="${p.video}" poster="${p.img}" autoplay muted loop playsinline></video>`
+          : `<img src="${p.img}" alt="${p.nombre}" loading="lazy">`}
         <button class="producto-add" data-id="${p.id}">Agregar al carrito</button>
       </div>
       <p class="producto-cat">${CATEGORY_LABELS[p.categoria]}</p>
       <h3 class="producto-nombre">${p.nombre}</h3>
+      <p class="producto-desc">${p.descripcion || ""}</p>
       <p class="producto-precio">${formatARS(p.precio)}</p>
     </article>
   `).join("");
@@ -265,20 +287,10 @@ function showToast(msg) {
   toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
 }
 
-// ---- NEWSLETTER (solo front, guarda localmente) ----
-$("#newsletterForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const emailInput = $("#newsletterEmail");
+// ---- NEWSLETTER (envía a Mailchimp; se abre en una pestaña nueva) ----
+$("#newsletterForm").addEventListener("submit", () => {
   const msg = $("#newsletterMsg");
-  const email = emailInput.value.trim();
-  if (!email) return;
-
-  const subs = JSON.parse(localStorage.getItem("pp_newsletter") || "[]");
-  if (!subs.includes(email)) subs.push(email);
-  localStorage.setItem("pp_newsletter", JSON.stringify(subs));
-
-  msg.textContent = "¡Gracias por sumarte! Te vamos a escribir con las novedades.";
-  emailInput.value = "";
+  msg.textContent = "¡Gracias por sumarte! Revisá tu correo (y spam) para confirmar la suscripción.";
 });
 
 // ---- FOOTER: año actual ----
