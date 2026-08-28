@@ -236,16 +236,16 @@ function saveCart(cart) {
   renderCart();
 }
 
-function addToCart(id) {
+function addToCart(id, qty = 1) {
   const product = PRODUCTS.find(p => p.id === id);
   if (!product) return;
 
   const cart = getCart();
   const existing = cart.find(item => item.id === id);
   if (existing) {
-    existing.cantidad += 1;
+    existing.cantidad += qty;
   } else {
-    cart.push({ id: product.id, cantidad: 1 });
+    cart.push({ id: product.id, cantidad: qty });
   }
   saveCart(cart);
   showToast(`${product.nombre} agregado al carrito`);
@@ -342,35 +342,75 @@ $("#cartItems").addEventListener("click", (e) => {
   if (action === "remove") removeFromCart(id);
 });
 
-// ---- MODAL DE PRODUCTO (zoom + detalle) ----
+// ---- MODAL DE PRODUCTO (galería + detalle) ----
 const productModalOverlay = $("#productModalOverlay");
 const productModal = $("#productModal");
 const productModalMedia = $("#productModalMedia");
+
+const modalState = { product: null, media: [], index: 0, qty: 1 };
+
+function modalMainHTML(m, nombre) {
+  return m.tipo === "video"
+    ? `<video src="${m.src}" autoplay muted loop playsinline></video>`
+    : `<img src="${m.src}" alt="${nombre}">`;
+}
+
+// Pinta la foto/video grande + su reflejo + resalta la miniatura activa
+function renderModalViewer() {
+  const m = modalState.media[modalState.index];
+  $(".modal-main", productModalMedia).innerHTML = modalMainHTML(m, modalState.product.nombre);
+  $(".modal-reflection", productModalMedia).innerHTML =
+    m.tipo === "imagen" ? `<img src="${m.src}" alt="">` : "";
+  $$(".modal-thumb", productModalMedia).forEach((t, i) => t.classList.toggle("active", i === modalState.index));
+}
+
+function setModalIndex(newIndex) {
+  const total = modalState.media.length;
+  modalState.index = (newIndex + total) % total;
+  renderModalViewer();
+}
+
+function updateModalQty() {
+  $("#productModalQty").textContent = modalState.qty;
+}
 
 function openProductModal(id) {
   const p = PRODUCTS.find(x => x.id === id);
   if (!p) return;
 
-  const media = getMedia(p);
-  productModalMedia.innerHTML = media.length > 1
-    ? `
-      <div class="producto-carousel" data-index="0">
-        <div class="carousel-track">
-          ${media.map(m => `<div class="carousel-slide">${mediaSlideHTML(m, p.nombre)}</div>`).join("")}
-        </div>
+  modalState.product = p;
+  modalState.media = getMedia(p);
+  modalState.index = 0;
+  modalState.qty = 1;
+
+  const hasVarios = modalState.media.length > 1;
+  productModal.classList.toggle("no-thumbs", !hasVarios);
+
+  productModalMedia.innerHTML = `
+    ${hasVarios ? `
+      <div class="modal-thumbs">
+        ${modalState.media.map((m, i) => `
+          <button class="modal-thumb${i === 0 ? " active" : ""}" data-index="${i}">
+            ${m.tipo === "video" ? `<video src="${m.src}" muted playsinline></video>` : `<img src="${m.src}" alt="">`}
+          </button>`).join("")}
+      </div>` : ""}
+    <div class="modal-main-wrap">
+      <div class="modal-main"></div>
+      <div class="modal-reflection"></div>
+      ${hasVarios ? `
         <button class="carousel-arrow carousel-prev" data-dir="-1" aria-label="Foto anterior">‹</button>
         <button class="carousel-arrow carousel-next" data-dir="1" aria-label="Foto siguiente">›</button>
-        <div class="carousel-dots">
-          ${media.map((_, i) => `<span class="carousel-dot${i === 0 ? " active" : ""}" data-index="${i}"></span>`).join("")}
-        </div>
-      </div>`
-    : mediaSlideHTML(media[0], p.nombre);
+      ` : ""}
+    </div>
+  `;
+  renderModalViewer();
 
   $("#productModalCat").textContent = CATEGORY_LABELS[p.categoria];
   $("#productModalNombre").textContent = p.nombre;
   $("#productModalDesc").textContent = p.descripcion || "";
   $("#productModalPrecio").textContent = formatARS(p.precio);
   $("#productModalAdd").dataset.id = p.id;
+  updateModalQty();
 
   productModalOverlay.classList.add("open");
   productModal.classList.add("open");
@@ -392,28 +432,31 @@ grid.addEventListener("click", (e) => {
   if (card) openProductModal(card.dataset.id);
 });
 
-// Navegación de carrusel y "agregar al carrito" dentro del modal
+// Navegación, miniaturas, cantidad y "agregar al carrito" dentro del modal
 productModal.addEventListener("click", (e) => {
   const arrow = e.target.closest(".carousel-arrow");
-  const dot = e.target.closest(".carousel-dot");
-  const carousel = e.target.closest(".producto-carousel");
+  const thumb = e.target.closest(".modal-thumb");
   const addBtn = e.target.closest(".producto-add");
-  const img = e.target.closest(".carousel-slide img, .product-modal-media > img");
+  const qtyBtn = e.target.closest(".modal-qty-btn");
 
-  if (arrow && carousel) {
-    goToSlide(carousel, Number(carousel.dataset.index) + Number(arrow.dataset.dir));
-  } else if (dot && carousel) {
-    goToSlide(carousel, Number(dot.dataset.index));
+  if (arrow) {
+    setModalIndex(modalState.index + Number(arrow.dataset.dir));
+  } else if (thumb) {
+    setModalIndex(Number(thumb.dataset.index));
+  } else if (qtyBtn) {
+    modalState.qty = Math.max(1, modalState.qty + Number(qtyBtn.dataset.dir));
+    updateModalQty();
   } else if (addBtn) {
-    addToCart(addBtn.dataset.id);
-  } else if (img) {
-    img.classList.toggle("zoomed");
+    addToCart(addBtn.dataset.id, modalState.qty);
   }
 });
 
 $("#productModalClose").addEventListener("click", closeProductModal);
 productModalOverlay.addEventListener("click", closeProductModal);
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeProductModal(); });
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  if (productModal.classList.contains("open")) closeProductModal();
+});
 
 // ---- ABRIR / CERRAR CARRITO ----
 const cartDrawer = $("#cartDrawer");
