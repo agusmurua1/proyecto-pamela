@@ -149,15 +149,15 @@
   </div>
   <div class="lookbook-grid">
     <div class="lookbook-item">
-      <img src="img/marca/lookbook-1.jpg" alt="Corbatero Olivo, realizado con piedras naturales">
+      <img src="img/marca/lookbook-1.jpeg" alt="Corbatero Olivo, realizado con piedras naturales">
       <div class="lookbook-caption">Corbatero Olivo</div>
     </div>
     <div class="lookbook-item">
-      <img src="img/marca/lookbook-2.jpg" alt="Rosario y Denario con dije de cruz">
+      <img src="img/marca/lookbook-2.jpeg" alt="Rosario y Denario con dije de cruz">
       <div class="lookbook-caption">Rosarios y Denarios</div>
     </div>
     <div class="lookbook-item">
-      <img src="img/marca/lookbook-3.jpg" alt="Gargantilla Alerce, cordón de acero con cristal de roca facetado">
+      <img src="img/marca/lookbook-3.jpeg" alt="Gargantilla Alerce, cordón de acero con cristal de roca facetado">
       <div class="lookbook-caption">Gargantilla Alerce</div>
     </div>
   </div>
@@ -287,6 +287,22 @@
     <p class="cart-note">Coordinamos el pago y el envío por WhatsApp o Instagram.</p>
   </div>
 </aside>
+
+<!-- ============ MODAL PRODUCTO (zoom + detalle) ============ -->
+<div class="product-modal-overlay" id="productModalOverlay"></div>
+<div class="product-modal" id="productModal">
+  <button class="icon-btn product-modal-close" id="productModalClose" aria-label="Cerrar">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4l16 16M20 4L4 20"/></svg>
+  </button>
+  <div class="product-modal-media" id="productModalMedia"></div>
+  <div class="product-modal-info">
+    <p class="producto-cat" id="productModalCat"></p>
+    <h3 class="producto-nombre" id="productModalNombre"></h3>
+    <p class="producto-desc" id="productModalDesc"></p>
+    <p class="producto-precio" id="productModalPrecio"></p>
+    <button class="btn btn-primary btn-block producto-add" id="productModalAdd">Agregar al carrito</button>
+  </div>
+</div>
 
 <!-- ============ TOAST ============ -->
 <div class="toast" id="toast"></div>

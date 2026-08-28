@@ -189,8 +189,8 @@ p{ margin:0; }
 .producto-img{
   position:relative; aspect-ratio: 4/5; overflow:hidden; background: var(--secondary); margin-bottom:.9rem;
 }
-.producto-img img{ width:100%; height:100%; object-fit:cover; transition: transform .6s ease; }
-.producto-img video{ width:100%; height:100%; object-fit:cover; display:block; }
+.producto-img img{ width:100%; height:100%; object-fit:cover; transition: transform .6s ease; cursor: zoom-in; }
+.producto-img video{ width:100%; height:100%; object-fit:cover; display:block; cursor: zoom-in; }
 .producto-card:hover .producto-img img{ transform: scale(1.06); }
 .producto-add{
   position:absolute; left:.6rem; right:.6rem; bottom:.6rem;
@@ -232,6 +232,53 @@ p{ margin:0; }
   border:1px solid rgba(33,26,20,.25); cursor:pointer; transition: background .2s;
 }
 .carousel-dot.active{ background: #fff; border-color: var(--fg); }
+
+/* ---- MODAL de producto (zoom + detalle) ---- */
+.product-modal-overlay{
+  position:fixed; inset:0; background: rgba(20,15,10,.62);
+  opacity:0; visibility:hidden; transition: opacity .25s ease; z-index:100;
+}
+.product-modal-overlay.open{ opacity:1; visibility:visible; }
+
+.product-modal{
+  position:fixed; top:50%; left:50%; translate:-50% -50%;
+  width:min(940px, 92vw); max-height:88vh;
+  background: var(--bg); border-radius:.6rem; overflow:hidden;
+  display:grid; grid-template-columns: 1.15fr 1fr;
+  opacity:0; visibility:hidden; scale:.96;
+  transition: opacity .25s ease, scale .25s ease, visibility .25s ease;
+  z-index:101; box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+.product-modal.open{ opacity:1; visibility:visible; scale:1; }
+
+.product-modal-media{ position:relative; background:#100c08; aspect-ratio: 1/1; overflow:hidden; }
+.product-modal-media .producto-carousel,
+.product-modal-media .carousel-track,
+.product-modal-media .carousel-slide{ height:100%; }
+.product-modal-media img, .product-modal-media video{
+  width:100%; height:100%; object-fit:contain; display:block;
+  cursor: zoom-in; transition: transform .3s ease;
+}
+.product-modal-media img.zoomed{ cursor: zoom-out; transform: scale(2); }
+
+.product-modal-close{
+  position:absolute; top:.7rem; right:.7rem; z-index:5;
+  background: rgba(250,247,242,.92); width:2rem; height:2rem; border-radius:50%;
+}
+.product-modal-close:hover{ background:#fff; }
+
+.product-modal-info{
+  padding: 2rem 1.8rem; display:flex; flex-direction:column; gap:.7rem; overflow-y:auto;
+}
+.product-modal-info .producto-nombre{ font-size:1.4rem; }
+.product-modal-info .producto-desc{ color: var(--muted); line-height:1.55; }
+.product-modal-info .producto-precio{ font-size:1.2rem; margin-top:.3rem; }
+.product-modal-info .btn{ margin-top:.8rem; }
+
+@media (max-width: 720px){
+  .product-modal{ grid-template-columns: 1fr; max-height:92vh; overflow-y:auto; width:94vw; }
+  .product-modal-media{ aspect-ratio: 4/3; }
+}
 
 /* ============ BANNER ENCARGO ============ */
 .banner-encargo{

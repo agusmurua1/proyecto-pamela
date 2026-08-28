@@ -47,15 +47,15 @@ const PRODUCTS = [
     descripcion: "Consultar por colores disponibles. Elastizado, cierre regulable." },
 
   // ---- COLECCIÓN WOODSTOCK ----
-  { id: "ar-05", nombre: "Aros Bold",                categoria: "aretes",   precio: 15000, img: "img/productos/aros-bold.jpg",
-    galeria: ["img/productos/aros-bold-violeta-turquesa.jpg"],
+  { id: "ar-05", nombre: "Aros Bold",                categoria: "aretes",   precio: 15000, img: "img/productos/aros-bold-violeta-turquesa.jpg",
+    galeria: ["img/productos/aros-bold.jpg"],
     videos: ["video/aros-bold-beige.mp4", "video/aros-bold-violeta.mp4"],
     descripcion: "Argollas tejidas a mano en crochet. Disponibles en varios colores." },
   { id: "co-09", nombre: "Collar Gypsy",             categoria: "collares", precio: 20000, img: "img/productos/collar-gypsy.jpg",
-    galeria: ["img/productos/collar-gypsy-2.jpg", "img/productos/collar-gypsy-3.jpg", "img/productos/collar-gypsy-4.jpg"],
+    galeria: ["img/productos/collar-gypsy-2.jpg"],
     descripcion: "Tejido a mano a crochet. Material: hilo encerado. Con cierre con cadena regulable. Largo aproximado 50cm." },
-  { id: "co-10", nombre: "Collar Kozmic",            categoria: "collares", precio: 30000, img: "img/productos/collar-kozmic.jpg",
-    galeria: ["img/productos/collar-kozmic-2.jpg"],
+  { id: "co-10", nombre: "Collar Kozmic",            categoria: "collares", precio: 30000, img: "img/productos/collar-kozmic-pose-marron.jpg",
+    galeria: ["img/productos/collar-kozmic.jpg", "img/productos/collar-kozmic-2.jpg", "img/productos/collar-kozmic-pose-negro.jpg"],
     descripcion: "Combina cadenas con argollas de acero y argollas tejidas a mano con técnica crochet en hilo encerado. Cierre con cadena regulable. Largo aproximado 1m." },
   { id: "co-11", nombre: "Collar Rhiannon",          categoria: "collares", precio: 30000, img: "img/productos/collar-rhiannon.jpg",
     galeria: ["img/productos/collar-rhiannon-2.jpg"],
@@ -126,7 +126,7 @@ function renderProducts(filter = "todos") {
       : mediaSlideHTML(media[0], p.nombre);
 
     return `
-    <article class="producto-card">
+    <article class="producto-card" data-id="${p.id}">
       <div class="producto-img">
         ${imgBlock}
         <button class="producto-add" data-id="${p.id}">Agregar al carrito</button>
@@ -341,6 +341,79 @@ $("#cartItems").addEventListener("click", (e) => {
   if (action === "dec") updateQty(id, -1);
   if (action === "remove") removeFromCart(id);
 });
+
+// ---- MODAL DE PRODUCTO (zoom + detalle) ----
+const productModalOverlay = $("#productModalOverlay");
+const productModal = $("#productModal");
+const productModalMedia = $("#productModalMedia");
+
+function openProductModal(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+
+  const media = getMedia(p);
+  productModalMedia.innerHTML = media.length > 1
+    ? `
+      <div class="producto-carousel" data-index="0">
+        <div class="carousel-track">
+          ${media.map(m => `<div class="carousel-slide">${mediaSlideHTML(m, p.nombre)}</div>`).join("")}
+        </div>
+        <button class="carousel-arrow carousel-prev" data-dir="-1" aria-label="Foto anterior">‹</button>
+        <button class="carousel-arrow carousel-next" data-dir="1" aria-label="Foto siguiente">›</button>
+        <div class="carousel-dots">
+          ${media.map((_, i) => `<span class="carousel-dot${i === 0 ? " active" : ""}" data-index="${i}"></span>`).join("")}
+        </div>
+      </div>`
+    : mediaSlideHTML(media[0], p.nombre);
+
+  $("#productModalCat").textContent = CATEGORY_LABELS[p.categoria];
+  $("#productModalNombre").textContent = p.nombre;
+  $("#productModalDesc").textContent = p.descripcion || "";
+  $("#productModalPrecio").textContent = formatARS(p.precio);
+  $("#productModalAdd").dataset.id = p.id;
+
+  productModalOverlay.classList.add("open");
+  productModal.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeProductModal() {
+  productModalOverlay.classList.remove("open");
+  productModal.classList.remove("open");
+  productModalMedia.innerHTML = "";
+  document.body.style.overflow = "";
+}
+
+// Click en una foto/video del catálogo (no en flechas, puntitos ni "agregar") abre el modal
+grid.addEventListener("click", (e) => {
+  if (e.target.closest(".carousel-arrow, .carousel-dot, .producto-add")) return;
+  if (e.target.tagName !== "IMG" && e.target.tagName !== "VIDEO") return;
+  const card = e.target.closest(".producto-card");
+  if (card) openProductModal(card.dataset.id);
+});
+
+// Navegación de carrusel y "agregar al carrito" dentro del modal
+productModal.addEventListener("click", (e) => {
+  const arrow = e.target.closest(".carousel-arrow");
+  const dot = e.target.closest(".carousel-dot");
+  const carousel = e.target.closest(".producto-carousel");
+  const addBtn = e.target.closest(".producto-add");
+  const img = e.target.closest(".carousel-slide img, .product-modal-media > img");
+
+  if (arrow && carousel) {
+    goToSlide(carousel, Number(carousel.dataset.index) + Number(arrow.dataset.dir));
+  } else if (dot && carousel) {
+    goToSlide(carousel, Number(dot.dataset.index));
+  } else if (addBtn) {
+    addToCart(addBtn.dataset.id);
+  } else if (img) {
+    img.classList.toggle("zoomed");
+  }
+});
+
+$("#productModalClose").addEventListener("click", closeProductModal);
+productModalOverlay.addEventListener("click", closeProductModal);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeProductModal(); });
 
 // ---- ABRIR / CERRAR CARRITO ----
 const cartDrawer = $("#cartDrawer");
