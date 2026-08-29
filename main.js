@@ -50,6 +50,7 @@ const PRODUCTS = [
   { id: "ar-05", nombre: "Aros Bold",                categoria: "aretes",   precio: 15000, img: "img/productos/aros-bold-violeta-turquesa.jpg",
     galeria: ["img/productos/aros-bold.jpg"],
     videos: ["video/aros-bold-beige.mp4", "video/aros-bold-violeta.mp4"],
+    colores: ["Beige", "Violeta y turquesa"],
     descripcion: "Argollas tejidas a mano en crochet. Disponibles en varios colores." },
   { id: "co-09", nombre: "Collar Gypsy",             categoria: "collares", precio: 20000, img: "img/productos/collar-gypsy.jpg",
     galeria: ["img/productos/collar-gypsy-2.jpg"],
@@ -236,40 +237,42 @@ function saveCart(cart) {
   renderCart();
 }
 
-function addToCart(id, qty = 1) {
+function addToCart(id, qty = 1, color = null) {
   const product = PRODUCTS.find(p => p.id === id);
   if (!product) return;
 
   const cart = getCart();
-  const existing = cart.find(item => item.id === id);
+  const existing = cart.find(item => item.id === id && (item.color || null) === (color || null));
   if (existing) {
     existing.cantidad += qty;
   } else {
-    cart.push({ id: product.id, cantidad: qty });
+    const entry = { id: product.id, cantidad: qty };
+    if (color) entry.color = color;
+    cart.push(entry);
   }
   saveCart(cart);
   showToast(`${product.nombre} agregado al carrito`);
   openCart();
 }
 
-function updateQty(id, delta) {
+function updateQty(id, delta, color = null) {
   const cart = getCart();
-  const item = cart.find(i => i.id === id);
+  const item = cart.find(i => i.id === id && (i.color || null) === (color || null));
   if (!item) return;
   item.cantidad += delta;
-  const filtered = item.cantidad <= 0 ? cart.filter(i => i.id !== id) : cart;
+  const filtered = item.cantidad <= 0 ? cart.filter(i => i !== item) : cart;
   saveCart(filtered);
 }
 
-function removeFromCart(id) {
-  saveCart(getCart().filter(i => i.id !== id));
+function removeFromCart(id, color = null) {
+  saveCart(getCart().filter(i => !(i.id === id && (i.color || null) === (color || null))));
 }
 
 function cartWithDetails() {
   return getCart()
     .map(item => {
       const product = PRODUCTS.find(p => p.id === item.id);
-      return product ? { ...product, cantidad: item.cantidad } : null;
+      return product ? { ...product, cantidad: item.cantidad, color: item.color || null } : null;
     })
     .filter(Boolean);
 }
@@ -298,14 +301,15 @@ function renderCart() {
       <img src="${item.img}" alt="${item.nombre}">
       <div class="cart-item-info">
         <p class="cart-item-name">${item.nombre}</p>
+        ${item.color ? `<p class="cart-item-color">Color: ${item.color}</p>` : ""}
         <p class="cart-item-price">${formatARS(item.precio)}</p>
         <div class="cart-item-qty">
-          <button data-action="dec" data-id="${item.id}" aria-label="Restar">−</button>
+          <button data-action="dec" data-id="${item.id}" data-color="${item.color || ""}" aria-label="Restar">−</button>
           <span>${item.cantidad}</span>
-          <button data-action="inc" data-id="${item.id}" aria-label="Sumar">+</button>
+          <button data-action="inc" data-id="${item.id}" data-color="${item.color || ""}" aria-label="Sumar">+</button>
         </div>
       </div>
-      <button class="cart-item-remove" data-action="remove" data-id="${item.id}">Quitar</button>
+      <button class="cart-item-remove" data-action="remove" data-id="${item.id}" data-color="${item.color || ""}">Quitar</button>
     </div>
   `).join("");
 
@@ -313,7 +317,7 @@ function renderCart() {
   cartTotal.textContent = formatARS(total);
 
   // Armar mensaje de WhatsApp
-  const lineas = items.map(i => `• ${i.nombre} x${i.cantidad} — ${formatARS(i.precio * i.cantidad)}`);
+  const lineas = items.map(i => `• ${i.nombre}${i.color ? ` (${i.color})` : ""} x${i.cantidad} — ${formatARS(i.precio * i.cantidad)}`);
   const mensaje = [
     "¡Hola Pamela! Quiero hacer este pedido:",
     "",
@@ -336,10 +340,11 @@ grid.addEventListener("click", (e) => {
 $("#cartItems").addEventListener("click", (e) => {
   const btn = e.target.closest("button[data-action]");
   if (!btn) return;
-  const { action, id } = btn.dataset;
-  if (action === "inc") updateQty(id, 1);
-  if (action === "dec") updateQty(id, -1);
-  if (action === "remove") removeFromCart(id);
+  const { action, id, color } = btn.dataset;
+  const colorVal = color || null;
+  if (action === "inc") updateQty(id, 1, colorVal);
+  if (action === "dec") updateQty(id, -1, colorVal);
+  if (action === "remove") removeFromCart(id, colorVal);
 });
 
 // ---- MODAL DE PRODUCTO (galería + detalle) ----
@@ -347,7 +352,9 @@ const productModalOverlay = $("#productModalOverlay");
 const productModal = $("#productModal");
 const productModalMedia = $("#productModalMedia");
 
-const modalState = { product: null, media: [], index: 0, qty: 1 };
+const modalState = { product: null, media: [], index: 0, qty: 1, colores: [], color: null };
+
+const COLOR_PERSONALIZADO = "Personalizado (color/dije a elección a coordinar)";
 
 function modalMainHTML(m, nombre) {
   return m.tipo === "video"
@@ -372,6 +379,22 @@ function updateModalQty() {
   $("#productModalQty").textContent = modalState.qty;
 }
 
+function renderModalColors() {
+  const box = $("#productModalColors");
+  if (modalState.colores.length === 0) {
+    box.innerHTML = "";
+    return;
+  }
+  box.innerHTML = `
+    <p class="modal-colors-label">Color</p>
+    <div class="modal-colors-options">
+      ${modalState.colores.map(c => `
+        <button class="modal-color-btn${c === modalState.color ? " active" : ""}" data-color="${c}">${c}</button>
+      `).join("")}
+    </div>
+  `;
+}
+
 function openProductModal(id) {
   const p = PRODUCTS.find(x => x.id === id);
   if (!p) return;
@@ -380,6 +403,8 @@ function openProductModal(id) {
   modalState.media = getMedia(p);
   modalState.index = 0;
   modalState.qty = 1;
+  modalState.colores = p.colores ? [...p.colores, COLOR_PERSONALIZADO] : [];
+  modalState.color = modalState.colores[0] || null;
 
   const hasVarios = modalState.media.length > 1;
   productModal.classList.toggle("no-thumbs", !hasVarios);
@@ -408,6 +433,7 @@ function openProductModal(id) {
   $("#productModalPrecio").textContent = formatARS(p.precio);
   $("#productModalAdd").dataset.id = p.id;
   updateModalQty();
+  renderModalColors();
 
   productModalOverlay.classList.add("open");
   productModal.classList.add("open");
@@ -435,6 +461,7 @@ productModal.addEventListener("click", (e) => {
   const thumb = e.target.closest(".modal-thumb");
   const addBtn = e.target.closest(".modal-add-btn");
   const qtyBtn = e.target.closest(".modal-qty-btn");
+  const colorBtn = e.target.closest(".modal-color-btn");
   const mainMedia = e.target.closest(".modal-main img, .modal-main video");
 
   if (arrow) {
@@ -444,12 +471,39 @@ productModal.addEventListener("click", (e) => {
   } else if (qtyBtn) {
     modalState.qty = Math.max(1, modalState.qty + Number(qtyBtn.dataset.dir));
     updateModalQty();
+  } else if (colorBtn) {
+    modalState.color = colorBtn.dataset.color;
+    renderModalColors();
   } else if (addBtn) {
-    addToCart(addBtn.dataset.id, modalState.qty);
+    addToCart(addBtn.dataset.id, modalState.qty, modalState.color);
   } else if (mainMedia) {
     mainMedia.classList.toggle("zoomed");
   }
 });
+
+// Mientras la foto está en zoom, seguí el mouse para recorrer el detalle
+productModal.addEventListener("mousemove", (e) => {
+  const img = e.target.closest(".modal-main img.zoomed, .modal-main video.zoomed");
+  if (!img) return;
+  const rect = img.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * 100;
+  const y = ((e.clientY - rect.top) / rect.height) * 100;
+  img.style.setProperty("--zx", `${x}%`);
+  img.style.setProperty("--zy", `${y}%`);
+});
+
+// En celular: mover el dedo sobre la foto ampliada también recorre el detalle
+productModal.addEventListener("touchmove", (e) => {
+  const img = e.target.closest(".modal-main img.zoomed, .modal-main video.zoomed");
+  if (!img) return;
+  e.preventDefault();
+  const touch = e.touches[0];
+  const rect = img.getBoundingClientRect();
+  const x = ((touch.clientX - rect.left) / rect.width) * 100;
+  const y = ((touch.clientY - rect.top) / rect.height) * 100;
+  img.style.setProperty("--zx", `${x}%`);
+  img.style.setProperty("--zy", `${y}%`);
+}, { passive: false });
 
 $("#productModalClose").addEventListener("click", closeProductModal);
 productModalOverlay.addEventListener("click", closeProductModal);
