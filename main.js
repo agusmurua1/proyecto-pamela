@@ -354,7 +354,7 @@ const productModalMedia = $("#productModalMedia");
 
 const modalState = { product: null, media: [], index: 0, qty: 1, colores: [], color: null };
 
-const COLOR_PERSONALIZADO = "Personalizado (color/dije a elección a coordinar)";
+const COLOR_PERSONALIZADO = "Personalizado";
 
 function modalMainHTML(m, nombre) {
   return m.tipo === "video"
