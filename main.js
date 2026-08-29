@@ -355,12 +355,10 @@ function modalMainHTML(m, nombre) {
     : `<img src="${m.src}" alt="${nombre}">`;
 }
 
-// Pinta la foto/video grande + su reflejo + resalta la miniatura activa
+// Pinta la foto/video grande + resalta la miniatura activa
 function renderModalViewer() {
   const m = modalState.media[modalState.index];
   $(".modal-main", productModalMedia).innerHTML = modalMainHTML(m, modalState.product.nombre);
-  $(".modal-reflection", productModalMedia).innerHTML =
-    m.tipo === "imagen" ? `<img src="${m.src}" alt="">` : "";
   $$(".modal-thumb", productModalMedia).forEach((t, i) => t.classList.toggle("active", i === modalState.index));
 }
 
@@ -396,7 +394,6 @@ function openProductModal(id) {
       </div>` : ""}
     <div class="modal-main-wrap">
       <div class="modal-main"></div>
-      <div class="modal-reflection"></div>
       ${hasVarios ? `
         <button class="carousel-arrow carousel-prev" data-dir="-1" aria-label="Foto anterior">‹</button>
         <button class="carousel-arrow carousel-next" data-dir="1" aria-label="Foto siguiente">›</button>
@@ -436,8 +433,9 @@ grid.addEventListener("click", (e) => {
 productModal.addEventListener("click", (e) => {
   const arrow = e.target.closest(".carousel-arrow");
   const thumb = e.target.closest(".modal-thumb");
-  const addBtn = e.target.closest(".producto-add");
+  const addBtn = e.target.closest(".modal-add-btn");
   const qtyBtn = e.target.closest(".modal-qty-btn");
+  const mainMedia = e.target.closest(".modal-main img, .modal-main video");
 
   if (arrow) {
     setModalIndex(modalState.index + Number(arrow.dataset.dir));
@@ -448,6 +446,8 @@ productModal.addEventListener("click", (e) => {
     updateModalQty();
   } else if (addBtn) {
     addToCart(addBtn.dataset.id, modalState.qty);
+  } else if (mainMedia) {
+    mainMedia.classList.toggle("zoomed");
   }
 });
 
